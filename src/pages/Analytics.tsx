@@ -79,14 +79,14 @@ export default function Analytics() {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6">📊 Demand & Supply Analytics | माग र आपूर्ति विश्लेषण</h1>
+        <h1 className="text-2xl font-bold mb-6">📊 Demand & Supply Analytics</h1>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Average Demand Met | औसत माग पूरा
+                Average Demand Met
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -103,7 +103,7 @@ export default function Analytics() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Stock Efficiency | स्टक दक्षता
+                Stock Efficiency
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -120,7 +120,7 @@ export default function Analytics() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Festival Readiness | चाड तयारी
+                Festival Readiness
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -137,7 +137,7 @@ export default function Analytics() {
           {/* Demand vs Supply */}
           <Card>
             <CardHeader>
-              <CardTitle>Demand vs Supply | माग र आपूर्ति</CardTitle>
+              <CardTitle>Demand vs Supply</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -157,7 +157,7 @@ export default function Analytics() {
           {/* Monthly Sales Trend */}
           <Card>
             <CardHeader>
-              <CardTitle>Monthly Sales Trend | मासिक बिक्री प्रवृत्ति (NPR)</CardTitle>
+              <CardTitle>Monthly Sales Trend (NPR)</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -181,7 +181,7 @@ export default function Analytics() {
           {/* Category Distribution */}
           <Card>
             <CardHeader>
-              <CardTitle>Product Category Distribution | उत्पाद वर्ग वितरण</CardTitle>
+              <CardTitle>Product Category Distribution</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -209,7 +209,7 @@ export default function Analytics() {
           {/* Festival Impact */}
           <Card>
             <CardHeader>
-              <CardTitle>Festival Impact Analysis | चाड प्रभाव विश्लेषण</CardTitle>
+              <CardTitle>Festival Impact Analysis</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -257,7 +257,7 @@ export default function Analytics() {
         {/* Recommendations */}
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>📢 Analytics-Based Recommendations | विश्लेषण आधारित सिफारिसहरू</CardTitle>
+            <CardTitle>📢 Analytics-Based Recommendations</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">

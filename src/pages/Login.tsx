@@ -60,7 +60,7 @@ export default function Login() {
               {!isLogin && (
                 <>
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name | पूरा नाम</Label>
+                    <Label htmlFor="name">Full Name</Label>
                     <div className="relative">
                       <Input
                         id="name"
@@ -73,7 +73,7 @@ export default function Login() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="shopName">Shop Name | पसलको नाम</Label>
+                    <Label htmlFor="shopName">Shop Name</Label>
                     <div className="relative">
                       <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -90,7 +90,7 @@ export default function Login() {
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="panNumber">PAN Number | प्यान नम्बर</Label>
+                <Label htmlFor="panNumber">PAN Number</Label>
                 <div className="relative">
                   <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -106,7 +106,7 @@ export default function Login() {
               
               {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email | इमेल</Label>
+                  <Label htmlFor="email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -123,7 +123,7 @@ export default function Login() {
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="password">Password | पासवर्ड</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -143,7 +143,7 @@ export default function Login() {
                 className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
                 disabled={loading}
               >
-                {loading ? "Processing... | प्रक्रिया जारी..." : (isLogin ? "Sign In | साइन इन" : "Create Account | खाता बनाउनुहोस्")}
+                {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
               </Button>
             </form>
             
@@ -163,7 +163,7 @@ export default function Login() {
         </Card>
         
         <p className="text-center text-xs text-muted-foreground mt-6">
-          🏪 Trusted by 1000+ Nepali retailers | नेपालभरि १००० भन्दा बढी व्यापारीहरूको विश्वास
+          🏪 Trusted by 1000+ Nepali retailers across the country
         </p>
       </div>
     </div>

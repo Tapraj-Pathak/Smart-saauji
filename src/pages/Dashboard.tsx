@@ -27,9 +27,9 @@ import { useToast } from "@/hooks/use-toast";
 const mockProducts: Product[] = [
   {
     id: "1",
-    name: "Wai Wai Noodles | वाइ वाइ चाउचाउ",
+    name: "Wai Wai Noodles",
     quantity: 150,
-    category: "Instant Food | तत्काल खाना",
+    category: "Instant Food",
     expiryDate: new Date("2024-06-15"),
     minStock: 50,
     createdAt: new Date(),
@@ -37,9 +37,9 @@ const mockProducts: Product[] = [
   },
   {
     id: "2",
-    name: "Nebico Biscuit | नेबिको बिस्कुट",
+    name: "Nebico Biscuit",
     quantity: 8,
-    category: "Snacks | खाजा",
+    category: "Snacks",
     expiryDate: new Date("2024-04-20"),
     minStock: 20,
     createdAt: new Date(),
@@ -47,9 +47,9 @@ const mockProducts: Product[] = [
   },
   {
     id: "3",
-    name: "Mustard Oil (1L) | तोरीको तेल (१ लिटर)",
+    name: "Mustard Oil (1L)",
     quantity: 0,
-    category: "Cooking Oil | खाना पकाउने तेल",
+    category: "Cooking Oil",
     expiryDate: new Date("2024-12-01"),
     minStock: 10,
     createdAt: new Date(),
@@ -57,9 +57,9 @@ const mockProducts: Product[] = [
   },
   {
     id: "4",
-    name: "Dettol Soap | डेटोल साबुन",
+    name: "Dettol Soap",
     quantity: 45,
-    category: "Personal Care | व्यक्तिगत हेरचाह",
+    category: "Personal Care",
     expiryDate: new Date("2025-01-15"),
     minStock: 15,
     createdAt: new Date(),
@@ -67,9 +67,9 @@ const mockProducts: Product[] = [
   },
   {
     id: "5",
-    name: "Real Juice (1L) | रियल जुस (१ लिटर)",
+    name: "Real Juice (1L)",
     quantity: 25,
-    category: "Beverages | पेय पदार्थ",
+    category: "Beverages",
     expiryDate: new Date("2024-03-10"),
     minStock: 20,
     createdAt: new Date(),
@@ -77,9 +77,9 @@ const mockProducts: Product[] = [
   },
   {
     id: "6",
-    name: "Surf Excel (1kg) | सर्फ एक्सेल (१ किलो)",
+    name: "Surf Excel (1kg)",
     quantity: 12,
-    category: "Household | घरायसी सामान",
+    category: "Household",
     expiryDate: new Date("2025-06-20"),
     minStock: 10,
     createdAt: new Date(),
@@ -198,28 +198,28 @@ export default function Dashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatsCard
-            title="Total Products | कुल सामानहरू"
+            title="Total Products"
             value={totalProducts}
             icon={Package}
             gradient="bg-gradient-primary"
             trend={{ value: 12, isPositive: true }}
           />
           <StatsCard
-            title="Total Stock | कुल स्टक"
+            title="Total Stock"
             value={totalValue}
-            description="units in inventory | भण्डारमा एकाइहरू"
+            description="units in inventory"
             icon={ShoppingCart}
             gradient="bg-gradient-emerald"
           />
           <StatsCard
-            title="Low Stock Items | कम स्टक सामान"
+            title="Low Stock Items"
             value={lowStockCount}
             icon={AlertTriangle}
             gradient="bg-gradient-warning"
             trend={{ value: 5, isPositive: false }}
           />
           <StatsCard
-            title="Out of Stock | स्टक सकियो"
+            title="Out of Stock"
             value={outOfStockCount}
             icon={TrendingUp}
             gradient="bg-gradient-danger"
@@ -228,7 +228,7 @@ export default function Dashboard() {
 
         {/* Recommendations */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-3 text-foreground">📊 Smart Insights | स्मार्ट सुझावहरू</h2>
+          <h2 className="text-xl font-semibold mb-3 text-foreground">📊 Smart Insights</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {mockRecommendations.map(rec => (
               <RecommendationCard key={rec.id} recommendation={rec} />
@@ -241,7 +241,7 @@ export default function Dashboard() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search products | सामान खोज्नुहोस्..."
+              placeholder="Search products by name or category..."
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -252,7 +252,7 @@ export default function Dashboard() {
             onClick={() => navigate("/add-product")}
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Product | सामान थप्नुहोस्
+            Add Product
           </Button>
         </div>
 
