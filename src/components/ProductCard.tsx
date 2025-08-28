@@ -12,11 +12,11 @@ interface ProductCardProps {
 const getStockStatus = (quantity: number, minStock?: number): StockStatus => {
   const threshold = minStock || 10;
   if (quantity === 0) {
-    return { status: 'out', color: 'bg-destructive', label: 'Out of Stock' };
+    return { status: 'out', color: 'bg-destructive', label: 'Out of Stock | स्टक सकियो' };
   } else if (quantity <= threshold) {
-    return { status: 'low', color: 'bg-warning', label: 'Low Stock' };
+    return { status: 'low', color: 'bg-warning', label: 'Low Stock | कम स्टक' };
   }
-  return { status: 'healthy', color: 'bg-success', label: 'In Stock' };
+  return { status: 'healthy', color: 'bg-success', label: 'In Stock | स्टकमा छ' };
 };
 
 export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => {
@@ -50,13 +50,13 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
           <div className="flex items-center gap-2 text-sm">
             <Package className="w-4 h-4 text-muted-foreground" />
             <span className="font-medium">{product.quantity}</span>
-            <span className="text-muted-foreground">units</span>
+            <span className="text-muted-foreground">units | एकाइहरू</span>
           </div>
           
           {product.expiryDate && (
             <div className={`flex items-center gap-2 text-sm ${isExpiringSoon ? 'text-warning' : ''}`}>
               <Calendar className="w-4 h-4" />
-              <span>Expires: {format(new Date(product.expiryDate), 'dd MMM yyyy')}</span>
+              <span>Expires | म्याद: {format(new Date(product.expiryDate), 'dd MMM yyyy')}</span>
             </div>
           )}
         </div>

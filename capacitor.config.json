@@ -1,0 +1,9 @@
+{
+  "appId": "app.lovable.7476328d800d41eebaa7e1677e3d2248",
+  "appName": "smart-saauji-retail-assist",
+  "webDir": "dist",
+  "server": {
+    "url": "https://7476328d-800d-41ee-baa7-e1677e3d2248.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  }
+}
