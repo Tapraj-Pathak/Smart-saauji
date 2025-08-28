@@ -31,7 +31,7 @@ export const StatsCard = ({ title, value, description, icon: Icon, trend, gradie
           <p className="text-sm text-muted-foreground mb-1">{title}</p>
           <p className="text-2xl font-bold text-foreground">{value}</p>
           {description && (
-            <p className="text-xs text-muted-foreground mt-1">{description} / विवरण</p>
+            <p className="text-xs text-muted-foreground mt-1">{description}</p>
           )}
         </div>
       </CardContent>

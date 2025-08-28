@@ -14,11 +14,11 @@ interface ProductCardProps {
 const getStockStatus = (quantity: number, minStock?: number): StockStatus => {
   const threshold = minStock || 10;
   if (quantity === 0) {
-    return { status: 'out', color: 'bg-destructive', label: 'Out of Stock / स्टक समाप्त' };
+    return { status: 'out', color: 'bg-destructive', label: 'Out of Stock' };
   } else if (quantity <= threshold) {
-    return { status: 'low', color: 'bg-warning', label: 'Low Stock / स्टक कम' };
+    return { status: 'low', color: 'bg-warning', label: 'Low Stock' };
   }
-  return { status: 'healthy', color: 'bg-success', label: 'In Stock / स्टक पर्याप्त' };
+  return { status: 'healthy', color: 'bg-success', label: 'In Stock' };
 };
 
 export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => {
@@ -55,7 +55,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-sm">
             <Package className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Qty / परिमाण</span>
+            <span className="text-muted-foreground">Qty</span>
             <Input
               type="number"
               className="h-8 w-20"
@@ -70,7 +70,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
                 }
               }}
             />
-            <span className="text-muted-foreground">units / एकाइ</span>
+            <span className="text-muted-foreground">units</span>
             <Button
               size="sm"
               variant="outline"
@@ -88,7 +88,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
           {product.expiryDate && (
             <div className={`flex items-center gap-2 text-sm ${isExpiringSoon ? 'text-warning' : ''}`}>
               <Calendar className="w-4 h-4" />
-              <span>Expires / म्याद: {format(new Date(product.expiryDate), 'dd MMM yyyy')}</span>
+              <span>Expires: {format(new Date(product.expiryDate), 'dd MMM yyyy')}</span>
             </div>
           )}
         </div>

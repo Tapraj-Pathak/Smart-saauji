@@ -40,10 +40,10 @@ export const RecommendationCard = ({ recommendation }: RecommendationCardProps) 
           </div>
           <div className="flex-1">
             <h4 className="font-medium text-sm mb-1">{recommendation.product}</h4>
-            <p className="text-xs text-muted-foreground">{recommendation.message} / सुझाव</p>
+            <p className="text-xs text-muted-foreground">{recommendation.message}</p>
             {recommendation.festival && (
               <span className="inline-block mt-2 px-2 py-1 bg-accent text-accent-foreground text-xs rounded-full">
-                🎉 {recommendation.festival} / पर्व
+                🎉 {recommendation.festival}
               </span>
             )}
           </div>

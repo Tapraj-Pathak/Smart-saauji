@@ -296,7 +296,7 @@ export default function Dashboard() {
 
         {/* Recommendations */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-3 text-foreground">📊 Smart Insights / स्मार्ट इनसाइट्स</h2>
+          <h2 className="text-xl font-semibold mb-3 text-foreground">📊 Smart Insights</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {mockRecommendations.map(rec => (
               <RecommendationCard key={rec.id} recommendation={rec} />
@@ -307,19 +307,19 @@ export default function Dashboard() {
         {/* Low Stock + Wholesale Assist */}
         {lowStockProducts.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3 text-foreground">Stock Alert ⚠️ / स्टक चेतावनी</h2>
+            <h2 className="text-xl font-semibold mb-3 text-foreground">Stock Alert ⚠️</h2>
             <div className="rounded-md border border-border bg-card " >
               <div className="divide-y divide-border">
                 {lowStockProducts.map(item => (
                   <div key={item.id} className={`p-3 flex items-center justify-between gap-3 ${requestedWholesale[item.id] ? 'bg-red-50 dark:bg-red-900/30' : ''}`}>
                     <div>
                       <p className="font-medium text-foreground">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">Current: {item.quantity} • Min: {item.minStock || 10} / हाल: {item.quantity} • न्यूनतम: {item.minStock || 10}</p>
+                      <p className="text-xs text-muted-foreground">Current: {item.quantity} • Min: {item.minStock || 10}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
-                        placeholder="Request qty / अनुरोध परिमाण"
+                        placeholder="Request qty"
                         className="h-9 w-28"
                         onKeyDown={(e) => e.stopPropagation()}
                         onChange={(e) => {
@@ -346,7 +346,7 @@ export default function Dashboard() {
                           }
                         }}
                       >
-                        Confirm & Contact / पुष्टि र सम्पर्क
+                        Confirm & Contact
                       </Button>
                     </div>
                   </div>
@@ -361,7 +361,7 @@ export default function Dashboard() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search products by name or category... / नाम वा श्रेणीबाट खोज्नुहोस्"
+              placeholder="Search products by name or category..."
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -402,33 +402,33 @@ export default function Dashboard() {
             onClick={() => setShowAddForm(v => !v)}
           >
             <Plus className="w-5 h-5 mr-2" />
-            Add Product / नयाँ सामान थप्नुहोस्
+            Add Product
           </Button>
         </div>
 
         {showAddForm && (
           <div className="mb-6 p-4 border border-border rounded-lg bg-card">
-            <h3 className="text-lg font-semibold mb-3">Add New Product / नयाँ सामान थप्नुहोस्</h3>
+            <h3 className="text-lg font-semibold mb-3">Add New Product</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <Input
-                placeholder="Name / नाम"
+                placeholder="Name"
                 value={newProduct.name}
                 onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
               />
               <Input
-                placeholder="Category / श्रेणी"
+                placeholder="Category"
                 value={newProduct.category}
                 onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
               />
               <Input
                 type="number"
-                placeholder="Quantity / परिमाण"
+                placeholder="Quantity"
                 value={newProduct.quantity}
                 onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
               />
               <Input
                 type="date"
-                placeholder="Expiry Date / म्याद समाप्त हुने मिति"
+                placeholder="Expiry Date"
                 value={newProduct.expiryDate}
                 onChange={(e) => setNewProduct({ ...newProduct, expiryDate: e.target.value })}
               />
@@ -436,9 +436,9 @@ export default function Dashboard() {
             </div>
             <div className="mt-3 flex gap-3">
               <Button className="bg-success text-white" onClick={handleCreateProduct} disabled={isCreating}>
-                {isCreating ? 'Saving... / सेभ हुँदै...' : 'Save / सेभ'}
+                {isCreating ? 'Saving...' : 'Save'}
               </Button>
-              <Button variant="outline" onClick={() => setShowAddForm(false)}>Cancel / रद्द</Button>
+              <Button variant="outline" onClick={() => setShowAddForm(false)}>Cancel</Button>
             </div>
           </div>
         )}
