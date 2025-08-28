@@ -23,6 +23,7 @@ import {
 import { Product, Recommendation } from "@/types/inventory";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import api from "@/lib/api";
 
 // Mock data for demonstration
 const mockProducts: Product[] = [
@@ -31,7 +32,7 @@ const mockProducts: Product[] = [
     name: "Wai Wai Noodles",
     quantity: 150,
     category: "Instant Food",
-    expiryDate: new Date("2024-06-15"),
+    expiryDate: "",
     minStock: 50,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -41,51 +42,13 @@ const mockProducts: Product[] = [
     name: "Nebico Biscuit",
     quantity: 8,
     category: "Snacks",
-    expiryDate: new Date("2024-04-20"),
+    expiryDate: "",
     minStock: 20,
     createdAt: new Date(),
     updatedAt: new Date()
   },
-  {
-    id: "3",
-    name: "Mustard Oil (1L)",
-    quantity: 0,
-    category: "Cooking Oil",
-    expiryDate: new Date("2024-12-01"),
-    minStock: 10,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: "4",
-    name: "Dettol Soap",
-    quantity: 45,
-    category: "Personal Care",
-    expiryDate: new Date("2025-01-15"),
-    minStock: 15,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: "5",
-    name: "Real Juice (1L)",
-    quantity: 25,
-    category: "Beverages",
-    expiryDate: new Date("2024-03-10"),
-    minStock: 20,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: "6",
-    name: "Surf Excel (1kg)",
-    quantity: 12,
-    category: "Household",
-    expiryDate: new Date("2025-06-20"),
-    minStock: 10,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
+ 
+
 ];
 
 const mockRecommendations: Recommendation[] = [
@@ -131,11 +94,11 @@ export default function Dashboard() {
   const [sortBy, setSortBy] = useState<'name_asc' | 'name_desc' | 'qty_asc' | 'qty_desc'>('name_asc');
   const [newProduct, setNewProduct] = useState({
     name: "",
-    quantity: 0,
+    quantity: "",
     category: "",
-    expiryDate: "",
-    minStock: 10
+    expiryDate: ""
   });
+  const [isCreating, setIsCreating] = useState(false);
   const [requestedWholesale, setRequestedWholesale] = useState<Record<string, boolean>>({});
 
   const API_BASE = (import.meta as any)?.env?.VITE_API_URL || "http://localhost:4000/api";
@@ -144,15 +107,13 @@ export default function Dashboard() {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch(`${API_BASE}/products`);
-        if (!res.ok) throw new Error("Failed to load products");
-        const data = await res.json();
+        const data = await api.get<any[]>(`/products`);
         const mapped: Product[] = data.map((p: any) => ({
           id: p._id,
           name: p.name,
           quantity: p.quantity ?? 0,
           category: p.category,
-          expiryDate: p.expiryDate ? new Date(p.expiryDate) : undefined,
+          expiryDate: p.expiryDate ? new Date(p.expiryDate).toISOString() : undefined,
           minStock: p.minStock ?? 10,
           createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
           updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date()
@@ -174,17 +135,7 @@ export default function Dashboard() {
       setProducts(prev => prev.map(p => 
         p.id === id ? { ...p, quantity: Math.max(0, p.quantity + delta) } : p
       ));
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/products/${id}/adjust`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({ delta })
-      });
-      if (!res.ok) throw new Error("Failed to adjust quantity");
-      const updated = await res.json();
+      const updated = await api.post<any>(`/products/${id}/adjust`, { delta }, true);
       setProducts(prev => prev.map(p => 
         p.id === id ? { ...p, quantity: updated.quantity ?? p.quantity } : p
       ));
@@ -200,6 +151,8 @@ export default function Dashboard() {
 
   const handleCreateProduct = async () => {
     try {
+      if (isCreating) return;
+      setIsCreating(true);
       const token = localStorage.getItem("token");
       if (!token) {
         toast({ title: "Login required", description: "Please login to add products." });
@@ -209,37 +162,29 @@ export default function Dashboard() {
         name: newProduct.name,
         quantity: Number(newProduct.quantity) || 0,
         category: newProduct.category || undefined,
-        expiryDate: newProduct.expiryDate ? new Date(newProduct.expiryDate) : undefined,
-        minStock: Number(newProduct.minStock) || 10
+        expiryDate: newProduct.expiryDate ? new Date(newProduct.expiryDate) : undefined
       };
-      const res = await fetch(`${API_BASE}/products`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error("Failed to add product");
-      const created = await res.json();
+      const created = await api.post<any>(`/products`, payload, true);
       const prod: Product = {
         id: created._id,
         name: created.name,
         quantity: created.quantity ?? 0,
         category: created.category,
-        expiryDate: created.expiryDate ? new Date(created.expiryDate) : undefined,
-        minStock: created.minStock ?? 10,
+        expiryDate: created.expiryDate ? new Date(created.expiryDate).toISOString() : undefined,
         createdAt: created.createdAt ? new Date(created.createdAt) : new Date(),
         updatedAt: created.updatedAt ? new Date(created.updatedAt) : new Date()
       };
-      setProducts(prev => [prod, ...prev]);
+      setProducts(prev => {
+        if (prev.some(p => p.id === prod.id)) return prev;
+        return [prod, ...prev];
+      });
       setShowAddForm(false);
-      setNewProduct({ name: "", quantity: 0, category: "", expiryDate: "", minStock: 10 });
+      setNewProduct({ name: "", quantity: "", category: "", expiryDate: "" });
       toast({ title: "Product added", description: `${prod.name} created successfully.` });
     } catch (e: any) {
       console.error(e);
       toast({ title: "Add failed", description: e.message || "Could not add product" });
-    }
+    } finally { setIsCreating(false); }
   };
 
   const filteredProducts = products.filter(p => 
@@ -306,7 +251,7 @@ export default function Dashboard() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate("/")}
+                onClick={() => { localStorage.removeItem('token'); navigate("/"); }}
                 className="hover:bg-accent"
               >
                 <LogOut className="w-4 h-4" />
@@ -351,7 +296,7 @@ export default function Dashboard() {
 
         {/* Recommendations */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-3 text-foreground">📊 Smart Insights</h2>
+          <h2 className="text-xl font-semibold mb-3 text-foreground">📊 Smart Insights / स्मार्ट इनसाइट्स</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {mockRecommendations.map(rec => (
               <RecommendationCard key={rec.id} recommendation={rec} />
@@ -362,19 +307,19 @@ export default function Dashboard() {
         {/* Low Stock + Wholesale Assist */}
         {lowStockProducts.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3 text-foreground">Stock Alert⚠️</h2>
+            <h2 className="text-xl font-semibold mb-3 text-foreground">Stock Alert ⚠️ / स्टक चेतावनी</h2>
             <div className="rounded-md border border-border bg-card " >
               <div className="divide-y divide-border">
                 {lowStockProducts.map(item => (
                   <div key={item.id} className={`p-3 flex items-center justify-between gap-3 ${requestedWholesale[item.id] ? 'bg-red-50 dark:bg-red-900/30' : ''}`}>
                     <div>
                       <p className="font-medium text-foreground">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">Current: {item.quantity} • Min: {item.minStock || 10}</p>
+                      <p className="text-xs text-muted-foreground">Current: {item.quantity} • Min: {item.minStock || 10} / हाल: {item.quantity} • न्यूनतम: {item.minStock || 10}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
-                        placeholder="Request qty"
+                        placeholder="Request qty / अनुरोध परिमाण"
                         className="h-9 w-28"
                         onKeyDown={(e) => e.stopPropagation()}
                         onChange={(e) => {
@@ -393,12 +338,7 @@ export default function Dashboard() {
                             return;
                           }
                           try {
-                            const res = await fetch(`${API_BASE}/wholesale/request`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                              body: JSON.stringify({ productId: item.id, quantity: qty, note: 'Auto-generated from low stock alert' })
-                            });
-                            if (!res.ok) throw new Error('Failed to send request');
+                            await api.post(`/wholesale/request`, { productId: item.id, quantity: qty, note: 'Auto-generated from low stock alert' }, true);
                             toast({ title: 'Request sent', description: `${item.name}: ${qty} units requested from wholesaler.` });
                             setRequestedWholesale(prev => ({ ...prev, [item.id]: true }));
                           } catch (err: any) {
@@ -406,7 +346,7 @@ export default function Dashboard() {
                           }
                         }}
                       >
-                        Confirm & Contact
+                        Confirm & Contact / पुष्टि र सम्पर्क
                       </Button>
                     </div>
                   </div>
@@ -421,7 +361,7 @@ export default function Dashboard() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Search products by name or category..."
+              placeholder="Search products by name or category... / नाम वा श्रेणीबाट खोज्नुहोस्"
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -462,46 +402,43 @@ export default function Dashboard() {
             onClick={() => setShowAddForm(v => !v)}
           >
             <Plus className="w-5 h-5 mr-2" />
-            Add Product
+            Add Product / नयाँ सामान थप्नुहोस्
           </Button>
         </div>
 
         {showAddForm && (
           <div className="mb-6 p-4 border border-border rounded-lg bg-card">
-            <h3 className="text-lg font-semibold mb-3">Add New Product</h3>
+            <h3 className="text-lg font-semibold mb-3">Add New Product / नयाँ सामान थप्नुहोस्</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <Input
-                placeholder="Name"
+                placeholder="Name / नाम"
                 value={newProduct.name}
                 onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
               />
               <Input
-                placeholder="Category"
+                placeholder="Category / श्रेणी"
                 value={newProduct.category}
                 onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
               />
               <Input
                 type="number"
-                placeholder="Quantity"
+                placeholder="Quantity / परिमाण"
                 value={newProduct.quantity}
-                onChange={(e) => setNewProduct({ ...newProduct, quantity: Number(e.target.value) })}
+                onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
               />
               <Input
                 type="date"
-                placeholder="Expiry Date"
+                placeholder="Expiry Date / म्याद समाप्त हुने मिति"
                 value={newProduct.expiryDate}
                 onChange={(e) => setNewProduct({ ...newProduct, expiryDate: e.target.value })}
               />
-              <Input
-                type="number"
-                placeholder="Min Stock"
-                value={newProduct.minStock}
-                onChange={(e) => setNewProduct({ ...newProduct, minStock: Number(e.target.value) })}
-              />
+              
             </div>
             <div className="mt-3 flex gap-3">
-              <Button className="bg-success text-white" onClick={handleCreateProduct}>Save</Button>
-              <Button variant="outline" onClick={() => setShowAddForm(false)}>Cancel</Button>
+              <Button className="bg-success text-white" onClick={handleCreateProduct} disabled={isCreating}>
+                {isCreating ? 'Saving... / सेभ हुँदै...' : 'Save / सेभ'}
+              </Button>
+              <Button variant="outline" onClick={() => setShowAddForm(false)}>Cancel / रद्द</Button>
             </div>
           </div>
         )}
@@ -523,14 +460,14 @@ export default function Dashboard() {
               <div key={product.id} className="flex items-center justify-between p-3">
                 <div>
                   <p className="font-medium text-foreground">{product.name}</p>
-                  <p className="text-xs text-muted-foreground">{product.category || '—'}</p>
+                  <p className="text-xs text-muted-foreground">{product.category || '—'}{product.expiryDate ? ` • Exp: ${new Date(product.expiryDate).toLocaleDateString()}` : ''}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Qty</span>
                     <input
                       type="number"
-                      defaultValue={product.quantity}
+                      value={product.quantity}
                       className="h-8 w-20 rounded-md border border-border bg-background px-2 text-sm"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {

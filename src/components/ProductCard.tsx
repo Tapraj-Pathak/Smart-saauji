@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Product, StockStatus } from "@/types/inventory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,16 +14,19 @@ interface ProductCardProps {
 const getStockStatus = (quantity: number, minStock?: number): StockStatus => {
   const threshold = minStock || 10;
   if (quantity === 0) {
-    return { status: 'out', color: 'bg-destructive', label: 'Out of Stock' };
+    return { status: 'out', color: 'bg-destructive', label: 'Out of Stock / स्टक समाप्त' };
   } else if (quantity <= threshold) {
-    return { status: 'low', color: 'bg-warning', label: 'Low Stock' };
+    return { status: 'low', color: 'bg-warning', label: 'Low Stock / स्टक कम' };
   }
-  return { status: 'healthy', color: 'bg-success', label: 'In Stock' };
+  return { status: 'healthy', color: 'bg-success', label: 'In Stock / स्टक पर्याप्त' };
 };
 
 export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => {
   const stockStatus = getStockStatus(product.quantity, product.minStock);
   const [editQty, setEditQty] = useState<number>(product.quantity);
+  useEffect(() => {
+    setEditQty(product.quantity);
+  }, [product.quantity]);
   const isExpiringSoon = product.expiryDate && 
     new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
@@ -52,7 +55,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-sm">
             <Package className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Qty</span>
+            <span className="text-muted-foreground">Qty / परिमाण</span>
             <Input
               type="number"
               className="h-8 w-20"
@@ -67,7 +70,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
                 }
               }}
             />
-            <span className="text-muted-foreground">units</span>
+            <span className="text-muted-foreground">units / एकाइ</span>
             <Button
               size="sm"
               variant="outline"
@@ -85,7 +88,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
           {product.expiryDate && (
             <div className={`flex items-center gap-2 text-sm ${isExpiringSoon ? 'text-warning' : ''}`}>
               <Calendar className="w-4 h-4" />
-              <span>Expires: {format(new Date(product.expiryDate), 'dd MMM yyyy')}</span>
+              <span>Expires / म्याद: {format(new Date(product.expiryDate), 'dd MMM yyyy')}</span>
             </div>
           )}
         </div>
@@ -95,7 +98,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
             size="sm"
             variant="outline"
             className="flex-1 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
-            onClick={() => onUpdateQuantity(product.id, -1)}
+            onClick={() => { setEditQty(v => Math.max(0, (v || 0) - 1)); onUpdateQuantity(product.id, -1); }}
             disabled={product.quantity === 0}
           >
             <Minus className="w-4 h-4" />
@@ -104,7 +107,7 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
             size="sm"
             variant="outline"
             className="flex-1 hover:bg-success/10 hover:text-success hover:border-success/20"
-            onClick={() => onUpdateQuantity(product.id, 1)}
+            onClick={() => { setEditQty(v => Math.max(0, (v || 0) + 1)); onUpdateQuantity(product.id, 1); }}
           >
             <Plus className="w-4 h-4" />
           </Button>

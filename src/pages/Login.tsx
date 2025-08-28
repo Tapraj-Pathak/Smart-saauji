@@ -21,19 +21,62 @@ export default function Login() {
     name: ""
   });
 
+  const API_BASE = (import.meta as any)?.env?.VITE_API_URL || "http://localhost:4000/api";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    try {
+      if (!formData.email || !formData.password) {
+        throw new Error("Email and password are required");
+      }
 
-    // Simulate authentication
-    setTimeout(() => {
-      toast({
-        title: isLogin ? "Welcome back!" : "Account created!",
-        description: `Logged in as ${formData.email || 'retailer@smartsaauji.com'}`,
+      if (!isLogin) {
+        const pan = (formData.panNumber || '').toUpperCase().trim();
+        const panRegex = /^[A-Z0-9]{8,12}$/;
+        if (!panRegex.test(pan)) {
+          throw new Error("Invalid PAN format. Use 8-12 letters/numbers.");
+        }
+      }
+
+      const endpoint = isLogin ? 
+        `${API_BASE}/auth/login` : 
+        `${API_BASE}/auth/register`;
+
+      const payload = isLogin ? {
+        email: formData.email,
+        password: formData.password
+      } : {
+        name: formData.name || formData.shopName || formData.email,
+        email: formData.email,
+        password: formData.password,
+        role: 'owner',
+        panNumber: formData.panNumber
+      };
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-      navigate("/dashboard");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.message || 'Authentication failed');
+      }
+      const data = await res.json();
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
+      toast({
+        title: isLogin ? 'Welcome back!' : 'Account created!',
+        description: `Logged in as ${data?.user?.email || formData.email}`
+      });
+      navigate('/dashboard');
+    } catch (err: any) {
+      toast({ title: 'Authentication failed', description: err.message || 'Please try again.' });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -104,23 +147,21 @@ export default function Login() {
                 </div>
               </div>
               
-              {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      className="pl-10"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      required={!isLogin}
-                    />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    className="pl-10"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    required
+                  />
                 </div>
-              )}
+              </div>
               
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>

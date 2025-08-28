@@ -19,8 +19,26 @@ const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/smart_saauj
 
 // Middleware
 app.use(helmet());
+
+// CORS configuration
+const rawOrigins = process.env.CORS_ORIGIN || '*';
+const parsedOrigins = rawOrigins === '*'
+  ? '*'
+  : rawOrigins.split(',').map(o => o.trim()).filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || '*'
+  origin: parsedOrigins === '*' ? true : parsedOrigins,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+// Handle preflight
+app.options('*', cors({
+  origin: parsedOrigins === '*' ? true : parsedOrigins,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 app.use(express.json());
 app.use(morgan('dev'));

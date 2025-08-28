@@ -14,14 +14,16 @@ const issueToken = (user) => {
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
-    if (!email || !password) return res.status(400).json({ message: 'email and password are required' });
+    const { name, email, password, role, panNumber } = req.body;
+    if (!email || !password || !panNumber) return res.status(400).json({ message: 'name, email, password and panNumber are required' });
     const existing = await User.findOne({ email });
     if (existing) return res.status(409).json({ message: 'email already in use' });
+    const existingPan = await User.findOne({ panNumber });
+    if (existingPan) return res.status(409).json({ message: 'PAN already registered' });
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, passwordHash, role });
+    const user = await User.create({ name, email, passwordHash, role, panNumber });
     const token = issueToken(user);
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, panNumber: user.panNumber } });
   } catch (err) { next(err); }
 });
 

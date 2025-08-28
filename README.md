@@ -1,73 +1,148 @@
-# Welcome to your Lovable project
+## Smart Saauji
 
-## Project info
+Turn-key inventory and insights app for small retailers. This repo contains a React (Vite) frontend and an Express + MongoDB backend.
 
-**URL**: https://lovable.dev/projects/7476328d-800d-41ee-baa7-e1677e3d2248
+### Stack
+- Node.js, Express, MongoDB (Mongoose)
+- React (Vite, TypeScript), Tailwind CSS, shadcn-ui
 
-## How can I edit this code?
+### Repo layout
+```
+.
+├─ server/                 # Express API, MongoDB models, auth middleware
+│  ├─ routes/              # /auth, /products, /recommendations, /wholesale
+│  ├─ models/              # User, Product (Mongoose)
+│  ├─ middleware/          # JWT auth, role guard
+│  └─ index.js             # App entry
+├─ src/                    # React app
+│  ├─ pages/               # Login, Dashboard, Analytics
+│  ├─ components/          # UI and feature components
+│  └─ main.tsx             # App bootstrap
+└─ README.md
+```
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## Quick start
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7476328d-800d-41ee-baa7-e1677e3d2248) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+1) Install dependencies
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Frontend (root)
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Backend
+cd server
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2) Environment variables
+- Create `server/.env` (local dev template):
+```
+MONGO_URI=mongodb://127.0.0.1:27017/smart_saauji
+PORT=4000
+CORS_ORIGIN=http://localhost:5173
+JWT_SECRET=change_me_in_production
+JWT_EXPIRES_IN=7d
+```
+- Create `.env` at project root for the frontend:
+```
+VITE_API_URL=http://localhost:4000/api
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3) Start MongoDB
+- Windows service (recommended): open PowerShell as Admin
+```powershell
+Get-Service MongoDB
+Start-Service MongoDB
+```
+- Or run manually:
+```powershell
+mkdir C:\data\db   # first time only
+"C:\\Program Files\\MongoDB\\Server\\X.Y\\bin\\mongod.exe" --dbpath C:\\data\\db
+```
+
+4) Run servers
+```sh
+# Backend API
+cd server
+npm run dev
+
+# Frontend (new terminal at repo root)
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+5) Verify
+- API health: `http://localhost:4000/api/health`
+- App: Vite URL in console (typically `http://localhost:5173`)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## Using the app
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Authentication
+- Login/Register screen posts to the backend:
+  - `POST /api/auth/register` → creates user, returns `{ token, user }`
+  - `POST /api/auth/login` → returns `{ token, user }`
+- Token is stored in `localStorage` as `token` and used for protected actions.
 
-## What technologies are used for this project?
+### Products
+- `GET /api/products` → list products (supports simple text search with `?q=`)
+- `POST /api/products` (auth: owner) → create product
+- `PUT /api/products/:id` (auth: owner) → update
+- `DELETE /api/products/:id` (auth: owner) → remove
+- `POST /api/products/:id/adjust` (auth: owner|staff) → increment/decrement quantity
 
-This project is built with:
+### Recommendations
+- `GET /api/recommendations` → basic insights (low stock, upcoming expiry)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Wholesale (simulated)
+- `POST /api/wholesale/request` (auth) → echoes a request payload for outreach
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/7476328d-800d-41ee-baa7-e1677e3d2248) and click on Share -> Publish.
+## Configuration notes
+- CORS is controlled via `CORS_ORIGIN` in `server/.env` (comma-separated list or `*`).
+- Default MongoDB: `mongodb://127.0.0.1:27017/smart_saauji`. For Atlas, set `MONGO_URI` to your cluster string.
+- Do not commit secrets. Use `.env` files locally and secrets manager in production.
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## Troubleshooting
+- ECONNREFUSED 127.0.0.1:27017
+  - MongoDB not running. Start the service or run `mongod` manually (see above).
+- Duplicate index warnings
+  - Ensure only one unique index is defined for `User.email` (already fixed in `server/models/User.js`).
+- CORS errors in browser
+  - Confirm `CORS_ORIGIN` includes the frontend origin (e.g., `http://localhost:5173`). Restart backend after changes.
+- 401/403 on product mutations
+  - Ensure you are logged in; a JWT must be present in `localStorage` and sent in the `Authorization: Bearer <token>` header.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## npm scripts
+Frontend (root):
+```json
+{
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
+}
+```
+
+Backend (`server/`):
+```json
+{
+  "dev": "nodemon index.js",
+  "start": "node index.js"
+}
+```
+
+---
+
+## Roadmap ideas
+- Persistent analytics, better recommendation pipeline
+- Role management UI (owner vs staff)
+- Import/export products (CSV)
+- Optional cloud MongoDB (Atlas) quick-setup script
+
+
