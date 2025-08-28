@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Product, StockStatus } from "@/types/inventory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Plus, Minus, Package, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
@@ -21,6 +23,7 @@ const getStockStatus = (quantity: number, minStock?: number): StockStatus => {
 
 export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => {
   const stockStatus = getStockStatus(product.quantity, product.minStock);
+  const [editQty, setEditQty] = useState<number>(product.quantity);
   const isExpiringSoon = product.expiryDate && 
     new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
@@ -49,8 +52,34 @@ export const ProductCard = ({ product, onUpdateQuantity }: ProductCardProps) => 
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-sm">
             <Package className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{product.quantity}</span>
+            <span className="text-muted-foreground">Qty</span>
+            <Input
+              type="number"
+              className="h-8 w-20"
+              value={editQty}
+              onChange={(e) => setEditQty(Math.max(0, Number(e.target.value)))}
+              onFocus={(e) => e.currentTarget.select()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const next = Math.max(0, editQty || 0);
+                  const delta = next - product.quantity;
+                  if (delta !== 0) onUpdateQuantity(product.id, delta);
+                }
+              }}
+            />
             <span className="text-muted-foreground">units</span>
+            <Button
+              size="sm"
+              variant="outline"
+              className="ml-1"
+              onClick={() => {
+                const next = Math.max(0, editQty || 0);
+                const delta = next - product.quantity;
+                if (delta !== 0) onUpdateQuantity(product.id, delta);
+              }}
+            >
+              Save
+            </Button>
           </div>
           
           {product.expiryDate && (
