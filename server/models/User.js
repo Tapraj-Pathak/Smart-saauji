@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
   },
   passwordHash: { type: String, required: true },
   role: { type: String, enum: ['owner', 'staff'], default: 'owner' },
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] // <-- Add this line (optional)
+  //products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] // <-- Add this line (optional)
 }, {
   timestamps: true,
   toJSON: {
