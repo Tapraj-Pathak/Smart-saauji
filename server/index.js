@@ -19,6 +19,7 @@ const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/smart_saauj
 
 // Middleware
 app.use(helmet());
+<<<<<<< HEAD
 
 // CORS configuration
 const rawOrigins = process.env.CORS_ORIGIN || '*';
@@ -39,6 +40,10 @@ app.options('*', cors({
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+=======
+app.use(cors({
+  origin: process.env.CORS_ORIGIN?.split(',') || '*'
+>>>>>>> 19e5b88bc692b57ba3d55cb579a630ac0a62ede2
 }));
 app.use(express.json());
 app.use(morgan('dev'));
@@ -65,7 +70,11 @@ app.use((err, req, res, next) => {
 mongoose.connect(mongoUri)
   .then(() => {
     console.log('Connected to MongoDB');
+<<<<<<< HEAD
     app.listen(port, '0.0.0.0', () => console.log(`Server listening on http://0.0.0.0:${port}`));
+=======
+    app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
+>>>>>>> 19e5b88bc692b57ba3d55cb579a630ac0a62ede2
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);

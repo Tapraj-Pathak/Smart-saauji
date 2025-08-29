@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, trim: true },
+<<<<<<< HEAD
   email: {
     type: String,
     required: true,
@@ -38,6 +39,14 @@ const UserSchema = new mongoose.Schema({
     }
   }
 });
+=======
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  passwordHash: { type: String, required: true },
+  role: { type: String, enum: ['owner', 'staff'], default: 'owner' }
+}, { timestamps: true });
+
+UserSchema.index({ email: 1 }, { unique: true });
+>>>>>>> 19e5b88bc692b57ba3d55cb579a630ac0a62ede2
 
 export default mongoose.model('User', UserSchema);
 
