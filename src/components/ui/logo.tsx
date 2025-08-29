@@ -5,8 +5,10 @@ export const Logo = ({ className = "" }: { className?: string }) => {
         <span className="text-primary-foreground font-bold text-xl">S</span>
       </div>
       <div>
-        <h1 className="text-xl font-bold text-foreground">Smart Saauji</h1>
-        <p className="text-xs text-muted-foreground">Your Digital Shop Partner</p>
+        <h1 className="text-xl font-bold text-foreground">Smart साहुजी</h1>
+        <p className="text-xs text-muted-foreground">
+          Your Digital Shop Partner
+        </p>
       </div>
     </div>
   );

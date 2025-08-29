@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/hooks/use-toast";
@@ -18,10 +24,11 @@ export default function Login() {
     password: "",
     panNumber: "",
     shopName: "",
-    name: ""
+    name: "",
   });
 
-  const API_BASE = (import.meta as any)?.env?.VITE_API_URL || "http://localhost:4000/api";
+  const API_BASE =
+    (import.meta as any)?.env?.VITE_API_URL || "http://localhost:4000/api";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,48 +39,53 @@ export default function Login() {
       }
 
       if (!isLogin) {
-        const pan = (formData.panNumber || '').toUpperCase().trim();
+        const pan = (formData.panNumber || "").toUpperCase().trim();
         const panRegex = /^[A-Z0-9]{8,12}$/;
         if (!panRegex.test(pan)) {
           throw new Error("Invalid PAN format. Use 8-12 letters/numbers.");
         }
       }
 
-      const endpoint = isLogin ? 
-        `${API_BASE}/auth/login` : 
-        `${API_BASE}/auth/register`;
+      const endpoint = isLogin
+        ? `${API_BASE}/auth/login`
+        : `${API_BASE}/auth/register`;
 
-      const payload = isLogin ? {
-        email: formData.email,
-        password: formData.password
-      } : {
-        name: formData.name || formData.shopName || formData.email,
-        email: formData.email,
-        password: formData.password,
-        role: 'owner',
-        panNumber: formData.panNumber
-      };
+      const payload = isLogin
+        ? {
+            email: formData.email,
+            password: formData.password,
+          }
+        : {
+            name: formData.name || formData.shopName || formData.email,
+            email: formData.email,
+            password: formData.password,
+            role: "owner",
+            panNumber: formData.panNumber,
+          };
 
       const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err?.message || 'Authentication failed');
+        throw new Error(err?.message || "Authentication failed");
       }
       const data = await res.json();
       if (data?.token) {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem("token", data.token);
       }
       toast({
-        title: isLogin ? 'Welcome back!' : 'Account created!',
-        description: `Logged in as ${data?.user?.email || formData.email}`
+        title: isLogin ? "Welcome back!" : "Account created!",
+        description: `Logged in as ${data?.user?.email || formData.email}`,
       });
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err: any) {
-      toast({ title: 'Authentication failed', description: err.message || 'Please try again.' });
+      toast({
+        title: "Authentication failed",
+        description: err.message || "Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -85,19 +97,19 @@ export default function Login() {
         <div className="flex justify-center mb-8">
           <Logo />
         </div>
-        
+
         <Card className="shadow-xl border-border">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
               {isLogin ? "Welcome Back" : "Create Account"}
             </CardTitle>
             <CardDescription className="text-center">
-              {isLogin 
-                ? "Enter your credentials to access your inventory" 
-                : "Register your shop with Smart Saauji"}
+              {isLogin
+                ? "Enter your credentials to access your inventory"
+                : "Register your shop with Smart साहुजी"}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
@@ -109,12 +121,14 @@ export default function Login() {
                         id="name"
                         placeholder="Enter your full name"
                         value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
                         required={!isLogin}
                       />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="shopName">Shop Name</Label>
                     <div className="relative">
@@ -124,14 +138,16 @@ export default function Login() {
                         placeholder="Enter your shop name"
                         className="pl-10"
                         value={formData.shopName}
-                        onChange={(e) => setFormData({...formData, shopName: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({ ...formData, shopName: e.target.value })
+                        }
                         required={!isLogin}
                       />
                     </div>
                   </div>
                 </>
               )}
-              
+
               <div className="space-y-2">
                 <Label htmlFor="panNumber">PAN Number</Label>
                 <div className="relative">
@@ -141,12 +157,14 @@ export default function Login() {
                     placeholder="Enter your PAN number"
                     className="pl-10"
                     value={formData.panNumber}
-                    onChange={(e) => setFormData({...formData, panNumber: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, panNumber: e.target.value })
+                    }
                     required
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -157,12 +175,14 @@ export default function Login() {
                     placeholder="Enter your email"
                     className="pl-10"
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -173,24 +193,32 @@ export default function Login() {
                     placeholder="Enter your password"
                     className="pl-10"
                     value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     required
                   />
                 </div>
               </div>
-              
+
               <Button
                 type="submit"
                 className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
                 disabled={loading}
               >
-                {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
+                {loading
+                  ? "Processing..."
+                  : isLogin
+                  ? "Sign In"
+                  : "Create Account"}
               </Button>
             </form>
-            
+
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}{" "}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
@@ -202,7 +230,7 @@ export default function Login() {
             </div>
           </CardContent>
         </Card>
-        
+
         <p className="text-center text-xs text-muted-foreground mt-6">
           🏪 Trusted by 1000+ Nepali retailers across the country
         </p>
