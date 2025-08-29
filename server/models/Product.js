@@ -6,6 +6,7 @@ const ProductSchema = new mongoose.Schema({
   category: { type: String, trim: true },
   expiryDate: { type: Date },
   minStock: { type: Number, default: 10 },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // <-- Add this line
 }, { timestamps: true });
 
 ProductSchema.index({ name: 'text', category: 'text' });

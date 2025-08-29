@@ -114,7 +114,7 @@ export default function Dashboard() {
           quantity: p.quantity ?? 0,
           category: p.category,
           expiryDate: p.expiryDate ? new Date(p.expiryDate).toISOString() : undefined,
-          minStock: p.minStock ?? 10,
+          
           createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
           updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date()
         }));
@@ -427,7 +427,7 @@ export default function Dashboard() {
                 onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
               />
               <Input
-                type="date"
+                type="string"
                 placeholder="Expiry Date"
                 value={newProduct.expiryDate}
                 onChange={(e) => setNewProduct({ ...newProduct, expiryDate: e.target.value })}
