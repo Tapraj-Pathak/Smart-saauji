@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, trim: true },
-
   email: {
     type: String,
     required: true,
@@ -17,11 +16,11 @@ const UserSchema = new mongoose.Schema({
     unique: true,
     uppercase: true,
     trim: true,
-    // Nepal PAN is typically 9 or 10 characters; relax if needed
     match: /^[A-Z0-9]{8,12}$/
   },
   passwordHash: { type: String, required: true },
-  role: { type: String, enum: ['owner', 'staff'], default: 'owner' }
+  role: { type: String, enum: ['owner', 'staff'], default: 'owner' },
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] // <-- Add this line (optional)
 }, {
   timestamps: true,
   toJSON: {
